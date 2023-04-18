@@ -2,8 +2,9 @@
 
 ## Step 1: Clone the repo
 
-- git clone https://github.com/Binar-Project/Back-End/edit/1-struktur-file
-
+```bash
+git clone https://github.com/Binar-Project/Back-End.git
+```
 ## Step 2 : Open Folder
 
 - cd /Binar-Project
