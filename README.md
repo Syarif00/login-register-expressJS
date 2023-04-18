@@ -6,7 +6,7 @@ git clone https://github.com/Binar-Project/Back-End.git
 ```
 ## Step 2 : Open Folder
 ```bash
-cd /Binar-Project
+cd .\Back-End\
 ```
 ## Step 3 : Install Dependencies
 ```bash
