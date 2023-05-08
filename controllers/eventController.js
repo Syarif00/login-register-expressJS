@@ -1,14 +1,13 @@
+const { Op } = require("sequelize");
 const { Event } = require("../config/model/index");
 
 const eventController = {
   getAllEvents: async (req, res) => {
     try {
       const events = await Event.findAll();
-      res
-        .status(201)
-        .json({ message: "Menampilkan Semua Event", data: events });
-    } catch (err) {
-      console.log(err);
+      res.status(201).json(events);
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: "Server error" });
     }
   },
@@ -31,32 +30,62 @@ const eventController = {
     }
   },
 
-  createEvent: async (req, res) => {
-    const {
-      title,
-      desc,
-      img,
-      date,
-      time,
-      start_registration,
-      end_registration,
-      location,
-      price,
-      link_registration,
-    } = req.body;
+  searchEvents: async (req, res) => {
+    try {
+      const { search } = req.query;
+      const events = await Event.findAll({
+        where: {
+          [Op.or]: [
+            { title: { [Op.substring]: search } },
+            { description: { [Op.substring]: search } },
+          ],
+        },
+      });
+      res.status(201).json(events);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  },
 
+  filterEvents: async (req, res) => {
+    try {
+      const { free, paid } = req.query;
+      let events;
+
+      if (free === "1" && paid === "0") {
+        events = await Event.findAll({
+          where: { price: 0 },
+        });
+      } else if (paid === "1" && free === "0") {
+        events = await Event.findAll({
+          where: { price: { [Op.ne]: 0 } },
+        });
+      } else {
+        events = await Event.findAll();
+      }
+
+      res.status(201).json(events);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  },
+
+  createEvent: async (req, res) => {
+    console.log(req.file);
     try {
       const newEvent = await Event.create({
-        title,
-        desc,
-        img,
-        date,
-        time,
-        start_registration,
-        end_registration,
-        location,
-        price,
-        link_registration,
+        title: req.body.title,
+        desc: req.body.desc,
+        img: req.file.path,
+        date: req.body.date,
+        time: req.body.time,
+        start_registration: req.body.start_registration,
+        end_registration: req.body.end_registration,
+        location: req.body.location,
+        price: req.body.price,
+        link_registration: req.body.link_registration,
       });
       res
         .status(201)
